@@ -1,181 +1,240 @@
-# Cahier des charges simplifié — Nordéa Banque
+# Cahier des charges — Nordéa Banque
 
-**Projet fil rouge : modernisation du système d’information d’une agence bancaire fictive**  
-**Version :** 1.0 — 19 octobre 2026  
-**Commanditaire :** Nordéa Banque, représentée par sa direction  
-**Réalisateur :** HexaShield, dans le cadre du projet scolaire  
-**Statut :** proposition à valider avant réalisation
+**Projet :** modernisation du système d’information d’une agence bancaire fictive  
+**Version :** 2.0 — 20 octobre 2026  
+**Commanditaire :** direction de Nordéa Banque  
+**Auteur :** le candidat, responsable informatique dans le cadre du projet  
+**Destinataire :** Jury  
+**Formation :** BTS SIO, principalement SISR  
+**Statut :** Projet à réaliser et à présenter au jury
 
 ## 1. Contexte et besoin
 
-Nordéa Banque est une banque régionale fictive située à Paris. Son agence accompagne les particuliers et les petites entreprises dans la gestion de leurs comptes, de leur épargne et de leurs demandes de crédit.
+Nordéa Banque est une banque régionale fictive située à Paris. Elle accompagne les particuliers et les petites entreprises dans la gestion de leurs comptes, de leur épargne et de leurs crédits.
 
-Elle compte 15 collaborateurs : une personne à la direction, cinq conseillers particuliers, trois conseillers professionnels, deux personnes à l’accueil, deux à l’administration et deux aux risques et à la conformité.
+L’agence compte 15 collaborateurs. Ses documents sont dispersés, les droits d’accès sont mal organisés et les incidents informatiques manquent de suivi. Les sauvegardes sont peu testées.
 
-Aujourd’hui, les documents sont dispersés, les droits d’accès sont mal organisés et les demandes internes passent principalement par courriel. Les sauvegardes sont insuffisamment testées et les incidents informatiques manquent de suivi.
-
-**Le besoin est de mettre en place une maquette de système d’information sécurisé, administrable et restaurable, adaptée aux 15 collaborateurs, ainsi qu’un site vitrine et une application de rendez-vous et de suivi des demandes clients.**
+En tant que responsable informatique, je propose une maquette pour centraliser les comptes et les fichiers avec Windows Server, sécuriser le réseau et améliorer le suivi informatique. Ce cahier des charges présente le projet au jury.
 
 ## 2. Objectifs
 
-- Centraliser les comptes et les ressources, avec des droits adaptés aux fonctions.
-- Séparer les réseaux des salariés, des serveurs, des visiteurs et de l’administration.
-- Présenter l’agence et ses services sur un site public.
-- Enregistrer les rendez-vous et suivre les demandes clients dans une application reliée à une base de données et à un service externe de courriels.
-- Organiser l’assistance, superviser les services et démontrer leur restauration après un incident.
-- Privilégier les solutions françaises, puis européennes ou open source, en justifiant les choix et leurs dépendances.
+- Centraliser les comptes et les fichiers.
+- Adapter les droits aux fonctions des salariés.
+- Séparer et sécuriser les réseaux.
+- Créer un site vitrine et une application interne simple.
+- Suivre les incidents avec GLPI et les services avec Zabbix.
+- Sauvegarder les données et tester leur restauration.
+- Fournir les guides et les preuves de fonctionnement.
+
+Le projet repose sur les compétences du BTS SIO. Des approfondissements facultatifs pourront être ajoutés une fois la maquette fonctionnelle.
 
 ## 3. Périmètre
 
-### Éléments inclus
+La maquette comprend six serveurs virtuels, un pare-feu pfSense, deux postes Windows de test et un NAS distinct pour les sauvegardes. Les 15 comptes seront testés sur ces postes.
 
-Le projet comprend une infrastructure virtualisée de six serveurs, un pare-feu dédié, un stockage de sauvegarde distinct, un annuaire de comptes, des partages de fichiers, un site vitrine, une application métier, un outil de tickets, une supervision et les procédures associées. Une formation et une recette complètent la livraison.
+Elle comprend aussi le site vitrine, l’application interne, GLPI, Zabbix et les procédures d’administration.
 
-La maquette utilisera uniquement des clients et des données fictifs. Les courriels de test seront envoyés à des adresses autorisées.
+Les clients et les données sont fictifs. Les opérations bancaires réelles, le portail client, l’application mobile et la haute disponibilité sont exclus.
 
-### Éléments exclus
-
-- Opérations bancaires réelles : paiements, virements, tenue de comptes et décisions de crédit.
-- Connexion à un système bancaire réel et utilisation de données clients réelles.
-- Application mobile native et portail client complet.
-- Haute disponibilité automatique entre plusieurs hôtes physiques et exploitation réelle en continu.
-
-### Hypothèse fonctionnelle à confirmer
-
-Pour limiter le périmètre, le site vitrine sera public et l’application métier sera réservée aux collaborateurs authentifiés sur le réseau interne. L’accueil et les conseillers saisiront les rendez-vous pour les clients. Une prise de rendez-vous directement accessible au public nécessiterait de préciser le parcours et la protection de l’application avant de l’ajouter au périmètre.
+Les rendez-vous sont saisis par l’accueil et les conseillers. Le site vitrine peut être présenté dans le laboratoire sans publication sur Internet.
 
 ## 4. Utilisateurs et accès
 
-Chaque collaborateur disposera d’un compte individuel. Les droits seront accordés selon le métier et, lorsque nécessaire, selon les dossiers attribués.
-
-| Profil | Effectif | Accès attendus |
+| Profil | Effectif | Accès prévus |
 | --- | ---: | --- |
-| Direction | 1 | Synthèses, pilotage et validations ; dossiers selon les autorisations définies. |
-| Conseillers particuliers | 5 | Rendez-vous et demandes des particuliers qui leur sont attribués. |
-| Conseillers professionnels | 3 | Rendez-vous et demandes des entreprises qui leur sont attribués. |
-| Accueil | 2 | Coordonnées nécessaires et rendez-vous, sans détail financier. |
-| Administration | 2 | Documents administratifs et traitements autorisés. |
-| Risques et conformité | 2 | Consultation des dossiers nécessaires aux contrôles et suivi des anomalies. |
-| HexaShield | Externe | Administration technique avec des comptes distincts et des accès limités aux interventions autorisées. |
+| Direction | 1 | Synthèses, validations et dossiers autorisés. |
+| Conseillers particuliers | 5 | Rendez-vous et demandes de leurs clients. |
+| Conseillers professionnels | 3 | Rendez-vous et demandes des entreprises suivies. |
+| Accueil | 2 | Coordonnées et rendez-vous, sans détail financier. |
+| Administration | 2 | Documents et demandes administratives. |
+| Risques et conformité | 2 | Dossiers nécessaires aux contrôles. |
 
-Les créations et modifications de droits seront validées par le responsable métier. Les comptes seront désactivés au départ d’un salarié et les droits revus chaque trimestre.
+J’assure le rôle de responsable informatique pour la maquette, sans modifier ces effectifs. J’utilise un compte d’administration distinct de mon compte courant.
 
-## 5. Exigences fonctionnelles
+Les droits sont attribués par groupes et validés par la direction. Ils sont contrôlés chaque trimestre. Au départ d’un salarié, son compte est désactivé et ses accès sont retirés.
 
-| Référence | Besoin attendu | Critère de validation |
+## 5. Fonctions attendues et tests
+
+| Réf. | Fonction attendue | Test de validation |
 | --- | --- | --- |
-| F01 | Présenter la banque, ses services, ses coordonnées et son agence sur un site vitrine. | Les pages et liens fonctionnent sur ordinateur et mobile ; le site est accessible en HTTPS. |
-| F02 | Centraliser les 15 comptes et appliquer les droits aux partages et à l’application. | Un compte de chaque profil est testé ; les accès autorisés réussissent et les accès interdits sont refusés. Un compte désactivé perd son accès. |
-| F03 | Créer, consulter, modifier et annuler un rendez-vous avec un client fictif, un conseiller, un motif, une date et un horaire. | Un parcours complet est démontré ; deux rendez-vous actifs ne peuvent pas occuper le même créneau d’un conseiller. |
-| F04 | Enregistrer et suivre une demande client avec une référence, un type, un responsable et un statut. | Une demande passe de « nouvelle » à « en cours », puis « clôturée » ; les changements sont conservés dans un historique. |
-| F05 | Stocker durablement les rendez-vous et demandes dans une base de données. | Les données enregistrées restent consultables après redémarrage de l’application. |
-| F06 | Transmettre une notification de rendez-vous par un service externe de courriels. | Un courriel de test est reçu. En cas d’échec externe, le rendez-vous reste enregistré, l’échec est visible par un utilisateur autorisé et une relance est possible. |
-| F07 | Centraliser les incidents et demandes informatiques dans GLPI. | Un incident et une demande sont qualifiés, priorisés, affectés, traités et clôturés avec leur historique. Une demande de droits comporte une approbation. |
-| F08 | Superviser les machines, les services essentiels, le stockage et les interfaces réseau. | L’arrêt volontaire d’un service surveillé déclenche une alerte ; le retour au fonctionnement est constaté et documenté. |
-| F09 | Automatiser les sauvegardes et permettre la restauration. | Un fichier, une base et une VM sont restaurés sur un environnement isolé ; leur contenu et leur fonctionnement sont vérifiés. |
-| F10 | Fournir des guides et former les utilisateurs. | Les guides utilisateur et administrateur sont remis ; les exercices de connexion, d’accès à une ressource et de création d’un ticket sont réalisés avec des comptes représentatifs. |
+| F01 | 15 comptes Active Directory et deux postes dans le domaine. | Connexions réussies ; nouvelle connexion réseau refusée avec un compte désactivé. |
+| F02 | GPO : mots de passe, verrouillage, lecteurs réseau et pare-feu Windows. | Paramètres appliqués sur les postes et vérifiés avec `gpresult`. |
+| F03 | Partages par service et espace commun. | Lecture et modification autorisées selon le profil ; autres accès refusés. |
+| F04 | Site vitrine en HTTPS. | Pages lisibles sur ordinateur et mobile ; certificat reconnu. |
+| F05 | Création, modification et annulation de rendez-vous. | Parcours complet ; aucun doublon de créneau, même lors de saisies simultanées. |
+| F06 | Suivi des demandes clients. | Passage de « nouvelle » à « en cours », puis « clôturée », avec historique. |
+| F07 | Connexion à l’application avec un compte AD. | Accès limité au rôle et aux dossiers autorisés. |
+| F08 | Gestion des incidents et demandes dans GLPI. | Ticket traité jusqu’à sa clôture ; demande de droits validée. |
+| F09 | Supervision des services. | Alerte lors d’une panne et constat du retour à la normale. |
+| F10 | Sauvegarde et restauration. | Fichier, base de données et VM restaurés et vérifiés sur un réseau isolé. |
+| F11 | Documentation et accompagnement. | Guides remis ; démonstration de connexion, d’accès aux fichiers et de création d’un ticket. |
 
-Les règles détaillées de rendez-vous, les catégories de demandes et les habilitations seront précisées pendant la conception. Ces fonctions constituent la cible à développer, et non un état déjà réalisé.
+L’envoi de courriels de rendez-vous est facultatif. Une panne de messagerie ne doit pas empêcher leur enregistrement.
 
-## 6. Contraintes techniques et de sécurité
+## 6. Architecture technique
 
-### Architecture retenue pour la maquette
+Windows Server gère les comptes et les fichiers. Debian héberge les services web et les outils de suivi.
 
-| Composant | Rôle et solutions prévues |
-| --- | --- |
-| Hôte physique | Proxmox VE sans abonnement, hébergeant les six VM. |
-| Pare-feu distinct | OPNsense Community : filtrage, routage et accès VPN avec authentification multifacteur. |
-| VM 1 — Web public | Debian, Apache, ModSecurity et OWASP CRS ; HTTPS avec un certificat adapté à l’environnement. |
-| VM 2 — Identité | Debian, Samba AD DC, DNS et Kea DHCP. |
-| VM 3 — Application | Debian, Apache, PHP et Symfony. |
-| VM 4 — Données métier | Debian et MariaDB Community Server. |
-| VM 5 — Services internes | Debian, partages Samba et GLPI avec sa base locale. |
-| VM 6 — Supervision | Debian et Zabbix avec sa base locale. |
-| NAS distinct | TrueNAS Community Edition pour recevoir les sauvegardes. |
-| Service externe | Brevo, sous réserve des conditions et quotas de son offre gratuite lors de l’intégration. |
+| Équipement          | Solution                       | Rôle                                         |
+| ------------------- | ------------------------------ | -------------------------------------------- |
+| Hôte physique       | Proxmox VE                     | Hébergement des machines virtuelles.         |
+| Pare-feu            | pfSense CE                     | Routage, filtrage et accès Internet.         |
+| SRV-AD01            | Windows Server 2025            | Active Directory, DNS, DHCP et GPO.          |
+| SRV-FIC01           | Windows Server 2025            | Partages SMB et droits NTFS.                 |
+| SRV-WEB01           | Debian et Apache               | Site vitrine.                                |
+| SRV-APP01           | Debian, Apache, PHP et MariaDB | Application interne et base de données.      |
+| SRV-GLPI01          | Debian et GLPI, avec sa base   | Inventaire et tickets.                       |
+| SRV-SUP01           | Debian et Zabbix, avec sa base | Supervision.                                 |
+| Deux postes de test | Windows 11 Pro ou Enterprise   | Tests des comptes, des GPO et des accès.     |
+| NAS distinct        | Stockage de sauvegarde         | Conservation des sauvegardes hors de l’hôte. |
 
-Les versions et ressources matérielles seront arrêtées après vérification des compatibilités et de la capacité disponible. L’application Symfony reste à développer.
+Windows Server 2022 peut remplacer 2025 selon les licences et les cours. Le pare-feu peut être physique ou constituer une VM supplémentaire.
 
-### Segmentation et protection
+L’application et sa base sont sur la même VM. La base est accessible uniquement en local. Une panne de l’hôte arrête toutes les VM qu’il héberge.
 
-| Zone | Réseau prévu | Usage |
+Prévoir idéalement 48 à 64 Go de mémoire pour l’hôte. Avec 32 Go, il pourra être nécessaire de limiter les VM allumées. Le stockage sera dimensionné selon les données et les sauvegardes à conserver.
+
+## 7. Domaine Windows et fichiers
+
+Le domaine de test sera `ad.nordea.test`. Les utilisateurs, postes et serveurs seront organisés dans Active Directory.
+
+Les droits suivront le principe : **utilisateur → groupe métier → groupe de permission → dossier**.
+
+Les partages prévus sont : Commun, Direction, Conseillers, Accueil, Administration et Conformité. Un tableau précisera les droits de lecture et de modification.
+
+Les stratégies de groupe (GPO) géreront les mots de passe, le verrouillage des sessions, les lecteurs réseau et le pare-feu Windows. Les mises à jour seront planifiées et vérifiées.
+
+Un script PowerShell de création de comptes pourra être ajouté en option.
+
+## 8. Réseau et sécurité
+
+| Zone | Réseau | Usage |
 | --- | --- | --- |
 | VLAN 10 | `192.168.10.0/24` | Postes des salariés. |
 | VLAN 20 | `192.168.20.0/24` | Serveurs internes et NAS. |
-| VLAN 30 | `192.168.30.0/24` | Wi-Fi visiteurs, avec accès Internet uniquement. |
-| VLAN 40 | `192.168.40.0/24` | DMZ contenant le serveur du site vitrine. |
-| VLAN 99 | `192.168.99.0/24` | Administration technique. |
+| VLAN 30 | `192.168.30.0/24` | Visiteurs : Internet uniquement. |
+| VLAN 40 | `192.168.40.0/24` | DMZ : zone séparée pour le site vitrine. |
+| VLAN 99 | `192.168.99.0/24` | Administration informatique. |
 
-Les échanges entre zones seront bloqués par défaut, puis ouverts selon les besoins documentés. La base métier ne sera accessible que par l’application et les administrateurs autorisés. Les accès aux autres bases seront limités à leurs services et administrateurs respectifs. Les restrictions entre équipements d’un même VLAN seront également appliquées au niveau des serveurs.
+pfSense bloque les échanges entre zones, sauf ceux nécessaires aux services. Les règles seront documentées et testées, notamment pour Active Directory.
 
-Les interfaces web utiliseront HTTPS. L’administration distante passera par un VPN nominatif avec mot de passe et code temporaire. Les secrets seront conservés hors du code source et du repository. Les contrôles de droits seront appliqués côté serveur. Les journaux et tickets devront permettre le diagnostic sans exposer de mots de passe ni de dossiers clients complets.
+Les postes utilisent le DNS de SRV-AD01 et un relais DHCP pour recevoir leur adresse IP. Le réseau visiteurs dispose d’un DHCP séparé sur pfSense.
 
-### Sauvegarde et continuité
+Les règles de sécurité sont les suivantes :
 
-Des sauvegardes nocturnes des VM et des exports cohérents des bases seront conservés sur le NAS. Une copie chiffrée sera transférée vers un support externe, déconnecté après transfert et conservé hors site. La rétention proposée est de sept sauvegardes quotidiennes et quatre hebdomadaires, sous réserve de capacité.
+- Aucun accès des visiteurs aux réseaux internes.
+- Aucun accès du site vitrine aux fichiers, à l’annuaire ou à la base métier.
+- Administration depuis le VLAN 99.
+- Accès au NAS réservé aux besoins de sauvegarde.
+- Pare-feu des serveurs actifs, y compris entre machines d’un même VLAN.
+- HTTPS avec des certificats reconnus par les postes de test.
 
-Les objectifs proposés pour les services essentiels sont une **perte de données maximale de 24 heures (RPO)** et une **reprise sous 4 heures (RTO)**. Ces objectifs devront être validés par des essais ; la reprise après panne de l’hôte suppose un matériel de remplacement disponible. Le résultat des sauvegardes sera contrôlé chaque jour et une restauration testée avant la recette, puis chaque mois dans le scénario d’exploitation.
+Un accès distant pourra être ajouté par VPN avec double authentification. RDP ne sera pas exposé sur Internet.
 
-La maquette repose sur un seul hôte physique : sa panne arrête les six VM, y compris la supervision. Une procédure de reprise devra préciser l’ordre de restauration des services et leurs dépendances. Un onduleur est prévu pour protéger l’hôte et le NAS.
+## 9. Site vitrine et application
 
-## 7. Assistance et exploitation
+Le site vitrine présente l’agence, ses services, ses horaires et ses coordonnées fictives. Il est réalisé en HTML/CSS et adapté aux mobiles.
 
-GLPI constituera le point d’entrée des demandes et incidents, avec un circuit inspiré des principes ITIL : enregistrement, qualification, affectation, traitement, résolution et clôture après vérification. En cas d’indisponibilité, un registre provisoire permettra leur saisie ultérieure.
+L’application interne utilise PHP et MariaDB. Elle gère les clients fictifs, les rendez-vous, les demandes et leur historique.
 
-| Priorité | Exemple | Objectif de prise en charge |
+Les rendez-vous durent 30 minutes, du lundi au vendredi de 9 h à 17 h, sous réserve de validation. Un conseiller ne peut pas avoir deux rendez-vous actifs sur le même créneau.
+
+La connexion utilise Active Directory via LDAP chiffré, avec vérification du certificat. Les mots de passe AD ne sont pas stockés dans l’application. Chaque accès à un dossier est contrôlé côté serveur.
+
+Les sessions expirent après inactivité et sont révoquées au départ d’un salarié. Les saisies et formulaires sont protégés ; les requêtes SQL sont préparées. Le code est suivi avec Git, sans mots de passe ni autres secrets.
+
+## 10. Sauvegarde et reprise
+
+Les VM, les fichiers et les bases sont sauvegardés chaque nuit sur le NAS. Une sauvegarde adaptée d’Active Directory est également prévue.
+
+Les sauvegardes sont conservées sept jours. Une copie hebdomadaire chiffrée est stockée sur un support externe, déconnecté et conservé hors site.
+
+Je vérifierai les sauvegardes chaque jour ouvré. Avant la présentation au jury, je testerai la restauration d’un fichier, d’une base et d’une VM sur un réseau isolé.
+
+En cas de panne, le réseau et Active Directory seront rétablis avant les fichiers et l’application. Les objectifs à tester sont :
+
+- **RPO :** perdre au maximum 24 heures de données avec les sauvegardes quotidiennes disponibles.
+- **RTO :** reprendre sous 4 heures avec un hôte fonctionnel.
+
+Le **RPO** correspond à la quantité maximale de données que l’on accepte de perdre, exprimée en durée. Le **RTO** correspond au délai maximal fixé pour remettre les services en fonctionnement après une panne.
+
+Si seule la copie externe hebdomadaire est disponible, la perte peut atteindre sept jours.
+
+## 11. Assistance et supervision
+
+GLPI centralise l’inventaire et les tickets. Chaque ticket est enregistré, priorisé, traité puis clôturé après vérification.
+
+| Priorité | Exemple | Prise en charge visée |
 | --- | --- | --- |
-| Critique | Application indisponible pour toute l’agence. | Sous 30 minutes. |
-| Haute | Collaborateur bloqué sans solution de remplacement. | Sous 2 heures. |
-| Normale | Demande de matériel ou gêne contournable. | Sous 1 jour ouvré. |
+| Critique | Application indisponible pour toute l’agence. | 30 minutes. |
+| Haute | Salarié bloqué sans solution de remplacement. | 2 heures. |
+| Normale | Demande de matériel ou gêne contournable. | 1 jour ouvré. |
 
-Ces objectifs sont proposés pour une plage de support du lundi au vendredi, de 9 h à 18 h. Ils concernent la prise en charge ; la résolution dépend du diagnostic. Les procédures couvriront les pannes système, réseau et applicatives, les mises à jour et le retour arrière.
+Ces délais sont simulés sur une plage de support du lundi au vendredi, de 9 h à 18 h.
 
-## 8. Budget, moyens et organisation
+Zabbix surveille les machines, l’espace disque, le DNS et les services web. Une panne doit déclencher une alerte visible.
 
-Le budget cible de licences et d’abonnements obligatoires est de **0 € pour les fonctions de la maquette**. Les éditions gratuites seront utilisées sans version d’essai ni extension payante nécessaire. Les conditions du service externe devront être vérifiées avant intégration.
+Les procédures prévoiront le suivi manuel des incidents si GLPI est indisponible et le retour arrière après une modification.
 
-Le matériel, l’onduleur, les supports externes, la connexion Internet, un éventuel nom de domaine et le temps de réalisation sont à chiffrer séparément. La copie hors site suppose un responsable désigné et une rotation effective des supports.
+## 12. Budget et licences
 
-La direction valide les besoins, les droits et la recette. HexaShield conçoit, réalise, teste et documente la solution. Des comptes représentatifs de chaque service permettent la validation des parcours métier. Dans le cadre scolaire, ces rôles peuvent être simulés.
+Le matériel et les licences de l’établissement seront utilisés en priorité. Les droits d’utilisation devront être vérifiés avant l’installation.
 
-## 9. Planning prévisionnel
+À défaut de licence disponible, Windows Server pourra être utilisé en évaluation officielle, dans les conditions et la durée autorisées. L’évaluation de Windows Server 2025 est limitée à 180 jours.
 
-| Période | Travaux et jalon attendu |
+Le budget dépendra du matériel et des licences disponibles. Une exploitation réelle nécessiterait de chiffrer les licences serveur, les droits de virtualisation, les licences d’accès client et celles des postes.
+
+## 13. Organisation et planning
+
+Je réalise la conception, l’installation, les tests et la documentation. La direction valide les besoins et les accès dans le scénario de l’entreprise. Le jury évalue les livrables et la démonstration.
+
+| Période | Travaux prévus |
 | --- | --- |
-| Semaine 1 | Validation du besoin, du périmètre, de l’architecture et de la matrice des accès. |
-| Semaine 2 | Installation de l’infrastructure, des réseaux et de l’annuaire. |
-| Semaine 3 | Réalisation du site vitrine, de l’application, de la base et de l’intégration courriel. |
-| Semaine 4 | Installation de GLPI, de la supervision et des sauvegardes ; rédaction des procédures. |
-| Semaine 5 | Tests fonctionnels et techniques, restauration et corrections. |
-| Semaine 6 | Démonstration, formation, recette finale et remise du dossier. |
+| Semaine 1 | Besoins, matériel, licences et schéma réseau. |
+| Semaine 2 | Proxmox, pfSense, VLAN et AD/DNS/DHCP. |
+| Semaine 3 | Partages, groupes, GPO et tests d’accès. |
+| Semaine 4 | Site vitrine, application et authentification. |
+| Semaine 5 | GLPI, Zabbix, sauvegardes et restauration. |
+| Semaine 6 | Corrections, guides et présentation au jury. |
 
-Ce calendrier de six semaines est une proposition à adapter aux échéances scolaires. Un point hebdomadaire permettra de suivre l’avancement et les difficultés.
+Ce planning sera adapté au temps disponible et au travail nécessaire sur l’application. Les options seront reportées si besoin.
 
-## 10. Livrables et recette
+## 14. Compétences et approfondissements
 
-Les livrables attendus sont :
+| Domaine | Compétences travaillées |
+| --- | --- |
+| Support | Inventaire, tickets, documentation et accompagnement. |
+| SISR | Virtualisation, Windows Server, réseau, supervision et restauration. |
+| Cybersécurité | Droits d’accès, séparation des réseaux, HTTPS et sauvegardes. |
 
-1. Le présent cahier des charges simplifié, à déposer dans le repository sous le nom `CAHIER_DES_CHARGES.md`.
-2. Le schéma réseau, le plan d’adressage, l’inventaire, les règles de filtrage et la matrice des accès.
-3. Le code du site et de l’application, le schéma de données et les instructions d’installation, sans secrets ni données réelles.
-4. Les procédures d’administration, de sauvegarde, de restauration, d’incident et de retour arrière.
-5. Les fiches de tests avec résultats, preuves, dates, testeur et mesures de reprise.
-6. La charte informatique, les guides et les supports de formation.
-7. Le bilan du projet, les limites connues et le procès-verbal de recette.
+Pour aller plus loin vers un niveau licence ou master, un ou deux sujets pourront être étudiés : analyse de risques, automatisation PowerShell, mesure des temps de reprise ou second contrôleur de domaine.
 
-La recette sera acceptée lorsque toutes les exigences F01 à F10 auront été vérifiées, que les tests critiques de droits, de segmentation et de restauration auront réussi, et qu’aucun incident critique ne restera ouvert. Les objectifs RTO et RPO devront être mesurés et respectés, ou faire l’objet d’une réserve explicitement acceptée. Toute autre réserve sera documentée avec son impact et l’action prévue.
+Ces options ne sont pas nécessaires à la validation du projet. Un second contrôleur sur le même hôte ne protège pas contre la panne de cet hôte et ne rend pas automatiquement le DHCP redondant.
 
-Le passage en exploitation sera simulé avec une sauvegarde préalable, une procédure de bascule, des vérifications et un retour arrière préparé. Les résultats non encore vérifiés seront indiqués comme « à mesurer ».
+## 15. Livrables et validation finale
 
-## 11. Points à confirmer avant réalisation
+Les documents à présenter sont :
 
-- Validation de l’application réservée aux collaborateurs ou ajout d’une prise de rendez-vous publique.
-- Horaires, durée des créneaux, catégories et statuts détaillés des demandes.
-- Matériel disponible, capacité de sauvegarde et moyens de reprise après panne de l’hôte.
-- Faisabilité de HTTPS public : domaine et validation du certificat, ou solution de certificat pour le laboratoire.
-- Conditions du service de courriels, calendrier final et personnes chargées de la recette.
+1. Le cahier des charges et le schéma réseau.
+2. L’inventaire, le plan IP et les règles de filtrage.
+3. Les groupes, les droits d’accès et les GPO.
+4. Le code, le modèle de données et le guide d’installation.
+5. Les procédures d’administration, de sauvegarde et de restauration.
+6. Les fiches de tests avec résultats et preuves.
+7. Les guides, la charte informatique et le bilan de validation.
 
+Le projet est validé lorsque les tests F01 à F11 réussissent et qu’aucun incident critique ne reste ouvert.
 
----
+## 16. Points à confirmer
 
-*Source de cadrage : note « Nordéa Banque — Logiciels gratuits » fournie pour le projet. Les règles de créneaux, les statuts minimaux et le choix d’un accès métier interne précisent le besoin sous forme de propositions à valider. Ce document décrit les résultats attendus avant réalisation.*
+- Matériel, stockage et licences disponibles.
+- Version de Windows Server retenue.
+- Application fournie, adaptée ou développée.
+- Droits d’accès et règles de rendez-vous.
+- Temps disponible et publication éventuelle du site.
+
+## Sources
+
+- Cahier des charges initial de Nordéa Banque du 19 octobre 2026.
+- [Microsoft — Évaluation de Windows Server 2025](https://www.microsoft.com/en-gb/evalcenter/download-windows-server-2025).
+- [Réseau CERTA — Document d’accompagnement du BTS SIO](https://www.reseaucerta.org/wp-content/uploads/sujets/public/GuideAccompagnement30oct.pdf).
