@@ -30,7 +30,7 @@ Le projet repose sur les compétences du BTS SIO. Des approfondissements faculta
 
 ## 3. Périmètre
 
-La maquette comprend six serveurs virtuels, un pare-feu pfSense, deux postes Windows de test et un NAS distinct pour les sauvegardes. Les 15 comptes seront testés sur ces postes.
+La maquette comprend six serveurs virtuels, un pare-feu pfSense, deux postes Windows de test et un seul NAS externe à l’hôte Proxmox pour les sauvegardes. Les 15 comptes seront testés sur ces postes.
 
 Elle comprend aussi le site vitrine, l’application interne, GLPI, Zabbix et les procédures d’administration.
 
@@ -86,7 +86,7 @@ Windows Server gère les comptes et les fichiers. Debian héberge les services w
 | SRV-GLPI01          | Debian et GLPI, avec sa base   | Inventaire et tickets.                       |
 | SRV-SUP01           | Debian et Zabbix, avec sa base | Supervision.                                 |
 | Deux postes de test | Windows 11 Pro ou Enterprise   | Tests des comptes, des GPO et des accès.     |
-| NAS distinct        | Stockage de sauvegarde         | Conservation des sauvegardes hors de l’hôte. |
+| NAS externe | Équipement distinct de l’hôte Proxmox | Sauvegardes uniquement ; aucune VM NAS supplémentaire. |
 
 Windows Server 2022 peut remplacer 2025 selon les licences et les cours. Le pare-feu peut être physique ou constituer une VM supplémentaire.
 
@@ -111,21 +111,19 @@ Un script PowerShell de création de comptes pourra être ajouté en option.
 | Zone | Réseau | Usage |
 | --- | --- | --- |
 | VLAN 10 | `192.168.10.0/24` | Postes des salariés. |
-| VLAN 20 | `192.168.20.0/24` | Serveurs internes et NAS. |
-| VLAN 30 | `192.168.30.0/24` | Visiteurs : Internet uniquement. |
+| VLAN 20 | `192.168.20.0/24` | Serveurs internes et NAS externe de sauvegarde. |
 | VLAN 40 | `192.168.40.0/24` | DMZ : zone séparée pour le site vitrine. |
 | VLAN 99 | `192.168.99.0/24` | Administration informatique. |
 
 pfSense bloque les échanges entre zones, sauf ceux nécessaires aux services. Les règles seront documentées et testées, notamment pour Active Directory.
 
-Les postes utilisent le DNS de SRV-AD01 et un relais DHCP pour recevoir leur adresse IP. Le réseau visiteurs dispose d’un DHCP séparé sur pfSense.
+Les postes utilisent le DNS de SRV-AD01 et un relais DHCP pour recevoir leur adresse IP.
 
 Les règles de sécurité sont les suivantes :
 
-- Aucun accès des visiteurs aux réseaux internes.
 - Aucun accès du site vitrine aux fichiers, à l’annuaire ou à la base métier.
 - Administration depuis le VLAN 99.
-- Accès au NAS réservé aux besoins de sauvegarde.
+- Accès au NAS externe réservé aux besoins de sauvegarde.
 - Pare-feu des serveurs actifs, y compris entre machines d’un même VLAN.
 - HTTPS avec des certificats reconnus par les postes de test.
 
@@ -145,7 +143,7 @@ Les sessions expirent après inactivité et sont révoquées au départ d’un s
 
 ## 10. Sauvegarde et reprise
 
-Les VM, les fichiers et les bases sont sauvegardés chaque nuit sur le NAS. Une sauvegarde adaptée d’Active Directory est également prévue.
+Les VM, les fichiers et les bases sont sauvegardés chaque nuit sur le NAS externe, distinct de l’hôte Proxmox. Une sauvegarde adaptée d’Active Directory est également prévue.
 
 Les sauvegardes sont conservées sept jours. Une copie hebdomadaire chiffrée est stockée sur un support externe, déconnecté et conservé hors site.
 
@@ -223,7 +221,7 @@ Les documents à présenter sont :
 6. Les fiches de tests avec résultats et preuves.
 7. Les guides, la charte informatique et le bilan de validation.
 
-Le projet est validé lorsque les tests F01 à F11 réussissent et qu’aucun incident critique ne reste ouvert.
+Le projet est validé lorsque les tests F01 à F11 réussissent et qu’aucun incident critique ne reste ouvert. Les résultats de restauration et les éventuels écarts sont présentés au jury.
 
 ## 16. Points à confirmer
 
