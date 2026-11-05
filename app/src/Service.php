@@ -45,7 +45,7 @@ final class Service {
     }
     public static function slot(string $value): array {
         $date=DateTimeImmutable::createFromFormat('!Y-m-d\TH:i',$value,new DateTimeZone('Europe/Paris'));
-        if(!$date||$date->format('Y-m-d\TH:i')!==$value||(int)$date->format('N')>5||(int)$date->format('H')<9||(int)$date->format('H')>16||!in_array($date->format('i'),['00','30'],true))throw new HttpError(422,'Créneau invalide : lundi à vendredi, toutes les 30 minutes de 9 h à 16 h 30.');
+        if(!$date||$date->format('Y-m-d\TH:i')!==$value||(int)$date->format('Y')<1000||(int)$date->format('N')>5||(int)$date->format('H')<9||(int)$date->format('H')>16||!in_array($date->format('i'),['00','30'],true))throw new HttpError(422,'Créneau invalide : lundi à vendredi, toutes les 30 minutes de 9 h à 16 h 30.');
         return [$date->format('Y-m-d H:i:s'),$date->modify('+30 minutes')->format('Y-m-d H:i:s')];
     }
     public function appointment(array $body,?int $id): array {

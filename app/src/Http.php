@@ -13,7 +13,9 @@ final class Http {
     public static function body(): array {
         if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 16384) throw new HttpError(413, 'Requête trop volumineuse.');
         if (strtolower(trim(explode(';', $_SERVER['CONTENT_TYPE'] ?? '')[0])) !== 'application/json') throw new HttpError(415, 'Le format JSON est obligatoire.');
-        try { $data = json_decode(file_get_contents('php://input'), true, 32, JSON_THROW_ON_ERROR); }
+        $raw=file_get_contents('php://input',false,null,0,16385);
+        if($raw===false||strlen($raw)>16384)throw new HttpError(413,'Requête trop volumineuse.');
+        try { $data = json_decode($raw, true, 32, JSON_THROW_ON_ERROR); }
         catch (JsonException) { throw new HttpError(400, 'JSON invalide.'); }
         if (!is_array($data) || array_is_list($data) && $data !== []) throw new HttpError(400, 'Un objet JSON est attendu.');
         return $data;
@@ -28,6 +30,7 @@ final class Http {
         return trim($value);
     }
     public static function id(mixed $value): int {
+        if(!is_int($value)&&!(is_string($value)&&ctype_digit($value)))throw new HttpError(422,'Identifiant invalide.');
         if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) throw new HttpError(422, 'Identifiant invalide.');
         return (int)$value;
     }
