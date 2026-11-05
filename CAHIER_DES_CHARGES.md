@@ -30,7 +30,7 @@ Le projet repose sur les compétences du BTS SIO. Des approfondissements faculta
 
 ## 3. Périmètre
 
-La maquette comprend six serveurs virtuels, un pare-feu pfSense, deux postes Windows de test et un seul NAS externe à l’hôte Proxmox pour les sauvegardes. Les 15 comptes seront testés sur ces postes.
+La maquette comprend six serveurs virtuels, un pare-feu pfSense, deux postes Windows de test et un seul NAS externe au PC physique personnel pour les sauvegardes. Les 15 comptes seront testés sur ces postes.
 
 Elle comprend aussi le site vitrine, l’application interne, GLPI, Zabbix et les procédures d’administration.
 
@@ -77,7 +77,7 @@ Windows Server gère les comptes et les fichiers. Debian héberge les services w
 
 | Équipement          | Solution                       | Rôle                                         |
 | ------------------- | ------------------------------ | -------------------------------------------- |
-| Hôte physique       | Proxmox VE                     | Hébergement des machines virtuelles.         |
+| PC physique personnel | Logiciel de virtualisation compatible avec le PC, à confirmer | Hébergement de toutes les VM sur mon PC personnel, sans achat de serveur dédié. |
 | Pare-feu            | pfSense CE                     | Routage, filtrage et accès Internet.         |
 | SRV-AD01            | Windows Server 2025            | Active Directory, DNS, DHCP et GPO.          |
 | SRV-FIC01           | Windows Server 2025            | Partages SMB et droits NTFS.                 |
@@ -86,13 +86,13 @@ Windows Server gère les comptes et les fichiers. Debian héberge les services w
 | SRV-GLPI01          | Debian et GLPI, avec sa base   | Inventaire et tickets.                       |
 | SRV-SUP01           | Debian et Zabbix, avec sa base | Supervision.                                 |
 | Deux postes de test | Windows 11 Pro ou Enterprise   | Tests des comptes, des GPO et des accès.     |
-| NAS externe | Équipement distinct de l’hôte Proxmox | Sauvegardes uniquement ; aucune VM NAS supplémentaire. |
+| NAS externe | Équipement distinct du PC physique personnel | Sauvegardes uniquement ; aucune VM NAS supplémentaire. |
 
 Windows Server 2022 peut remplacer 2025 selon les licences et les cours. Le pare-feu peut être physique ou constituer une VM supplémentaire.
 
-L’application et sa base sont sur la même VM. La base est accessible uniquement en local. Une panne de l’hôte arrête toutes les VM qu’il héberge.
+L’application et sa base sont sur la même VM. La base est accessible uniquement en local. Toutes les VM sont hébergées sur mon PC physique personnel. Une panne ou un arrêt de ce PC interrompt toutes les VM.
 
-Prévoir idéalement 48 à 64 Go de mémoire pour l’hôte. Avec 32 Go, il pourra être nécessaire de limiter les VM allumées. Le stockage sera dimensionné selon les données et les sauvegardes à conserver.
+La maquette sera adaptée à la mémoire, au processeur et au stockage disponibles sur mon PC physique personnel. Les ressources attribuées aux VM et le nombre de VM allumées simultanément seront ajustés aux tests, en conservant les services nécessaires à chaque scénario. Aucun achat de serveur dédié n’est prévu.
 
 ## 7. Domaine Windows et fichiers
 
@@ -143,7 +143,7 @@ Les sessions expirent après inactivité et sont révoquées au départ d’un s
 
 ## 10. Sauvegarde et reprise
 
-Les VM, les fichiers et les bases sont sauvegardés chaque nuit sur le NAS externe, distinct de l’hôte Proxmox. Une sauvegarde adaptée d’Active Directory est également prévue.
+Les VM, les fichiers et les bases sont sauvegardés chaque nuit sur le NAS externe, distinct du PC physique personnel. Une sauvegarde adaptée d’Active Directory est également prévue.
 
 Les sauvegardes sont conservées sept jours. Une copie hebdomadaire chiffrée est stockée sur un support externe, déconnecté et conservé hors site.
 
@@ -152,7 +152,7 @@ Je vérifierai les sauvegardes chaque jour ouvré. Avant la présentation au jur
 En cas de panne, le réseau et Active Directory seront rétablis avant les fichiers et l’application. Les objectifs à tester sont :
 
 - **RPO :** perdre au maximum 24 heures de données avec les sauvegardes quotidiennes disponibles.
-- **RTO :** reprendre sous 4 heures avec un hôte fonctionnel.
+- **RTO :** reprendre sous 4 heures avec le PC physique personnel fonctionnel et les ressources nécessaires disponibles.
 
 Le **RPO** correspond à la quantité maximale de données que l’on accepte de perdre, exprimée en durée. Le **RTO** correspond au délai maximal fixé pour remettre les services en fonctionnement après une panne.
 
@@ -176,7 +176,7 @@ Les procédures prévoiront le suivi manuel des incidents si GLPI est indisponib
 
 ## 12. Budget et licences
 
-Le matériel et les licences de l’établissement seront utilisés en priorité. Les droits d’utilisation devront être vérifiés avant l’installation.
+Mon PC physique personnel hébergera toutes les VM de la maquette. Aucun achat de serveur dédié n’est prévu. Le matériel complémentaire et les licences de l’établissement seront utilisés selon leur disponibilité. Les droits d’utilisation devront être vérifiés avant l’installation.
 
 À défaut de licence disponible, Windows Server pourra être utilisé en évaluation officielle, dans les conditions et la durée autorisées. L’évaluation de Windows Server 2025 est limitée à 180 jours.
 
@@ -189,7 +189,7 @@ Je réalise la conception, l’installation, les tests et la documentation. La d
 | Période | Travaux prévus |
 | --- | --- |
 | Semaine 1 | Besoins, matériel, licences et schéma réseau. |
-| Semaine 2 | Proxmox, pfSense, VLAN et AD/DNS/DHCP. |
+| Semaine 2 | Préparation de la virtualisation sur mon PC physique personnel, pfSense, VLAN et AD/DNS/DHCP. |
 | Semaine 3 | Partages, groupes, GPO et tests d’accès. |
 | Semaine 4 | Site vitrine, application et authentification. |
 | Semaine 5 | GLPI, Zabbix, sauvegardes et restauration. |
@@ -207,7 +207,7 @@ Ce planning sera adapté au temps disponible et au travail nécessaire sur l’a
 
 Pour aller plus loin vers un niveau licence ou master, un ou deux sujets pourront être étudiés : analyse de risques, automatisation PowerShell, mesure des temps de reprise ou second contrôleur de domaine.
 
-Ces options ne sont pas nécessaires à la validation du projet. Un second contrôleur sur le même hôte ne protège pas contre la panne de cet hôte et ne rend pas automatiquement le DHCP redondant.
+Ces options ne sont pas nécessaires à la validation du projet. Un second contrôleur sur le même PC physique ne protège pas contre la panne de ce PC et ne rend pas automatiquement le DHCP redondant.
 
 ## 15. Livrables et validation finale
 
@@ -225,7 +225,7 @@ Le projet est validé lorsque les tests F01 à F11 réussissent et qu’aucun in
 
 ## 16. Points à confirmer
 
-- Matériel, stockage et licences disponibles.
+- Ressources du PC physique personnel, logiciel de virtualisation retenu, stockage, NAS externe et licences disponibles.
 - Version de Windows Server retenue.
 - Application fournie, adaptée ou développée.
 - Droits d’accès et règles de rendez-vous.
@@ -236,3 +236,4 @@ Le projet est validé lorsque les tests F01 à F11 réussissent et qu’aucun in
 - Cahier des charges initial de Nordéa Banque du 19 octobre 2026.
 - [Microsoft — Évaluation de Windows Server 2025](https://www.microsoft.com/en-gb/evalcenter/download-windows-server-2025).
 - [Réseau CERTA — Document d’accompagnement du BTS SIO](https://www.reseaucerta.org/wp-content/uploads/sujets/public/GuideAccompagnement30oct.pdf).
+
