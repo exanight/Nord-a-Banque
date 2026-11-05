@@ -35,3 +35,7 @@ Selon l'installation, PDO SQLite et mbstring peuvent être déjà chargés ; ne 
 | Restauration MariaDB | Tables, relations et historique conservés |
 
 Prendre les captures sans mots de passe ni cookies. Les captures fournies portent uniquement sur la démonstration fictive et l'intégration visuelle. Aucun test AD/MariaDB n'est déclaré réussi avant exécution.
+
+## Mise à jour Liquid Glass
+Trois lumières de fond animées, surfaces translucides avec flou 34 px, reflets liés au pointeur, légère inclinaison, brillance et onde au clic, apparitions au défilement. Reflet et inclinaison observés dans le navigateur ; absence de débordement à 390 px ; navigation mobile testée. La réduction des animations est prise en charge par CSS et JavaScript. Les cinq tests du domaine passent après reconstruction.
+

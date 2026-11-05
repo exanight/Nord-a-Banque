@@ -1,8 +1,9 @@
 import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
+// Le même moteur d'animation est utilisé sur le site public et l'espace équipe.
 for(const folder of ['site/public/assets','app/public/assets','database','docs','var'])await mkdir(path.join(root,folder),{recursive:true});
-for(const folder of ['site/public','app/public']){await copyFile(path.join(root,'shared/theme.css'),path.join(root,folder,'assets/theme.css'));for(const weight of [400,500,600])await copyFile(path.join(root,`shared/inter-${weight}.ttf`),path.join(root,folder,`assets/inter-${weight}.ttf`));}
+for(const folder of ['site/public','app/public']){await copyFile(path.join(root,'shared/motion.js'),path.join(root,folder,'assets/motion.js'));await copyFile(path.join(root,'shared/theme.css'),path.join(root,folder,'assets/theme.css'));for(const weight of [400,500,600])await copyFile(path.join(root,`shared/inter-${weight}.ttf`),path.join(root,folder,`assets/inter-${weight}.ttf`));}
 const nav=[['index','Accueil'],['agence','L’agence'],['services','Nos services'],['contact','Contact']];
 const button=(text,url='contact.html')=>`<a class="button" href="${url}">${text}</a>`;
 const card=(title,text,cls='')=>`<section class="card ${cls}"><h2 class="card-title">${title}</h2><p>${text}</p></section>`;
@@ -15,7 +16,7 @@ mentions:{title:'Informations légales',content:`<h1>Informations légales</h1>$
 };
 for(const [key,page] of Object.entries(pages)){
 const html=`<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Nordéa Banque, agence fictive à Paris. Proximité, écoute et clarté."><title>${page.title} — Nordéa Banque</title><link rel="stylesheet" href="assets/theme.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#contenu">Aller au contenu</a><header class="topbar"><a class="brand" href="index.html" aria-label="Nordéa Banque — Accueil">Nordéa Banque.</a><button class="menu-toggle" aria-expanded="false" aria-controls="navigation">Menu</button><nav id="navigation" class="public-nav" aria-label="Navigation principale">${nav.map(([slug,label])=>`<a class="nav-link" ${key===slug?'aria-current="page"':''} href="${slug}.html">${label}</a>`).join('')}</nav></header><main id="contenu" class="public-main">${page.content}</main><footer class="footer"><p>Nordéa Banque · Agence fictive · Paris</p><a class="text-link" href="mentions.html">Informations légales</a></footer></body></html>`;
-await writeFile(path.join(root,'site/public',`${key}.html`),html);
+await writeFile(path.join(root,'site/public',`${key}.html`),html.replace('</head>','<script src="assets/motion.js" defer></script></head>'));
 }
 await writeFile(path.join(root,'site/public/assets/site.js'),`document.querySelector('.menu-toggle').addEventListener('click',event=>{const button=event.currentTarget;const open=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(open));document.querySelector('.public-nav').classList.toggle('open',open);});document.addEventListener('keydown',event=>{if(event.key==='Escape'){document.querySelector('.menu-toggle').setAttribute('aria-expanded','false');document.querySelector('.public-nav').classList.remove('open');}});`);
 const shell=await readFile(path.join(root,'shared/app.html'),'utf8');
