@@ -1,0 +1,6 @@
+import http from 'node:http';
+import path from 'node:path';
+import {readFile} from 'node:fs/promises';
+const root=path.resolve(import.meta.dirname,'..');
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.woff2':'font/woff2','.ttf':'font/ttf'};
+http.createServer(async(req,res)=>{try{let route=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const internal=route.startsWith('/equipe/');if(route==='/equipe'){res.writeHead(302,{Location:'/equipe/demo.html'});return res.end();}if(internal)route=route.slice(7);const base=path.join(root,internal?'app/public':'site/public');const file=path.resolve(base,'.'+(route.endsWith('/')?route+'index.html':route));if(!file.startsWith(base+path.sep)||!types[path.extname(file)]){res.writeHead(404);return res.end('Ressource indisponible dans cet aperçu statique.');}res.writeHead(200,{'Content-Type':types[path.extname(file)],'X-Content-Type-Options':'nosniff'});res.end(await readFile(file));}catch{res.writeHead(404);res.end('Page introuvable');}}).listen(4173,'127.0.0.1',()=>console.log('Local: http://127.0.0.1:4173/ — Démo équipe : http://127.0.0.1:4173/equipe/demo.html'));

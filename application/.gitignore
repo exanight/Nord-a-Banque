@@ -1,0 +1,7 @@
+config/local.php
+.env
+*.log
+node_modules/
+var/*
+!var/.gitkeep
+captures/
